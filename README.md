@@ -25,5 +25,5 @@ Run this image:
 
 ```console
 $ docker run --name centos-apache-php \
-	-d naqoda/centos-apache-php:latest
+	-d dustinliddick/centos-apache-php:latest
 ```
