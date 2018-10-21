@@ -256,4 +256,3 @@ EXPOSE 80 443
 ADD index.php /var/www/app/public_html/index.php
 
 CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
-CMD ["/usr/sbin/init"]
