@@ -37,6 +37,7 @@ RUN	yum -y update \
 	php71w-xml \
 	php71w-pecl-apcu \
 	unzip \
+	git \
 	libXrender fontconfig libXext urw-fonts \
 	ImageMagick ImageMagick-devel \
 	&& rm -rf /var/cache/yum/* \
@@ -48,39 +49,6 @@ RUN	yum -y update \
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 	&& echo "NETWORKING=yes" > /etc/sysconfig/network
 
-# -----------------------------------------------------------------------------
-# Install DB2 PDO driver
-# -----------------------------------------------------------------------------
-#ENV DB2EXPRESSC_URL https://s3-ap-southeast-1.amazonaws.com/naqoda/downloads/ibm_data_server_driver_package_linuxx64_v10.5.tar.gz
-#ENV IBM_DB_HOME /opt/ibm/dsdriver
-#ENV LD_LIBRARY_PATH /opt/ibm/dsdriver/odbc_cli_driver/linuxamd64/clidriver/lib
-
-#RUN mkdir /opt/ibm \
-#    && curl -fSLo /opt/ibm/expc.tar.gz $DB2EXPRESSC_URL  \
-#    && cd /opt/ibm && tar xf expc.tar.gz \
-#    && rm /opt/ibm/expc.tar.gz \
-#	&& cp $IBM_DB_HOME/php_driver/linuxamd64/php64/ibm_db2_5.3.6_nts.so /usr/lib64/php/modules/ibm_db2.so \
-#	&& cp $IBM_DB_HOME/php_driver/linuxamd64/php64/pdo_ibm_5.3.6_nts.so /usr/lib64/php/modules/pdo_ibm.so \
-#	&& cd /opt/ibm/dsdriver/odbc_cli_driver/linuxamd64 \
-#   && tar xf ibm_data_server_driver_for_odbc_cli.tar.gz \
-#	&& echo 'extension=ibm_db2.so' > /etc/php.d/pdo_db2.ini \
-#	&& echo 'extension=pdo_ibm.so' >> /etc/php.d/pdo_db2.ini
-
-#COPY modules/php71/* /usr/lib64/php/modules/
-
-# -----------------------------------------------------------------------------
-# Build Kafka PHP extension
-# -----------------------------------------------------------------------------
-#RUN curl -fSLo /tmp/librdkafka-master.zip https://github.com/edenhill/librdkafka/archive/master.zip \
-#	&& cd /tmp \
-#	&& unzip librdkafka-master.zip  \
-#	&& cd librdkafka-master \
-#	&& ./configure \
-#	&& make \
-#	&& make install
-	
-#RUN pecl install channel://pecl.php.net/rdkafka-2.0.0 \
-#	&& echo 'extension=rdkafka.so' > /etc/php.d/kafka.ini
 
 # -----------------------------------------------------------------------------
 # Global Apache configuration changes
@@ -158,28 +126,22 @@ RUN sed -i \
 	-e 's~^post_max_size.*$~post_max_size = 12M~g' \
 	/etc/php.ini
 
-# -----------------------------------------------------------------------------
-# PHP Ioncube
-# -----------------------------------------------------------------------------
-ADD ioncube/ioncube_loader_lin_7.1.so /usr/lib64/php/modules/ioncube_loader_lin_7.1.so
-RUN echo '[Ioncube]' >> /etc/php.ini
-RUN echo 'zend_extension = /usr/lib64/php/modules/ioncube_loader_lin_7.1.so' >> /etc/php.ini 
 
-# -----------------------------------------------------------------------------
-# ImageMagick
-# -----------------------------------------------------------------------------
-RUN echo '' | pecl install imagick
-RUN echo "extension=imagick.so" > /etc/php.d/imagick.ini
+#-----------------
+# Add Moodle Stuff
+#-----------------
+ENV MOODLE_VERSION=32 \
+    MOODLE_GITHUB=git://git.moodle.org/moodle.git \
+    MOODLE_DESTINATION=/var/www/html
+COPY rootfs /
+RUN git clone -b MOODLE_${MOODLE_VERSION}_STABLE --depth 1 ${MOODLE_GITHUB} ${MOODLE_DESTINATION}
+RUN mkdir -p /moodle/data && \
+    chown -R apache:apache /moodle && \
+    chmod 2775 /moodle && \
+    ln -sf /moodle/conf/config.php ${MOODLE_DESTINATION}/config.php
+# Enable mod_rewrite
 
-# -----------------------------------------------------------------------------
-# https://wkhtmltopdf.org
-# with dependencies: libXrender fontconfig libXext urw-fonts
-# -----------------------------------------------------------------------------
-RUN cd /usr/local/bin \
-	&& curl -fSLo wkhtmltox.tar.xz https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz \
-	&& tar -xf wkhtmltox.tar.xz \
-	&& rm wkhtmltox.tar.xz \
-	&& ln -s /usr/local/bin/wkhtmltox/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
+
 
 # -----------------------------------------------------------------------------
 # Add default service users
