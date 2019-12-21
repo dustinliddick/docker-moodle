@@ -1,7 +1,7 @@
 # =============================================================================
 # dustinliddick/docker-centos-apache-php
 #
-# CentOS-7, Apache 2.4, PHP 7.1, Ioncube, MYSQL
+# CentOS-7, Apache 2.4, PHP 7.1 
 # 
 # =============================================================================
 FROM centos:centos7
@@ -130,6 +130,8 @@ RUN sed -i \
 #-----------------
 # Add Moodle Stuff
 #-----------------
+
+#not sure if we want to do this, as unsure if our repo has what we need
 ENV MOODLE_VERSION=32 \
     MOODLE_GITHUB=git://git.moodle.org/moodle.git \
     MOODLE_DESTINATION=/var/www/html
@@ -215,6 +217,7 @@ EXPOSE 80 443
 # -----------------------------------------------------------------------------
 # Copy files into place
 # -----------------------------------------------------------------------------
+#ADD index.php /var/www/app/public_html/index.php
 ADD index.php /var/www/app/public_html/index.php
 
 CMD ["/usr/sbin/httpd", "-DFOREGROUND"]

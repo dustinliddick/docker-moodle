@@ -1,8 +1,5 @@
 # Supported tags and respective `Dockerfile` links
 
--	[`latest`,`php71`] Centos 7 + Apache 2.4 + PHP 7.1
--   [`php56`,`php70`] Centos 7 + Apache 2.2 + PHP 7.0
--   [`php53`] Centos 6.7 + Apache 2.2 + PHP 5.3
 
 # Info
 Based on official [centos] (https://hub.docker.com/_/centos/) images with addition of:
@@ -10,7 +7,6 @@ Based on official [centos] (https://hub.docker.com/_/centos/) images with additi
 - Apache
 - PHP
 - PDO
-- MySQL
 - DB2 (not in php71 image)
 - Mbstring
 - Soap
@@ -30,7 +26,7 @@ Moodle Docker Image, Documentation and Compose files to get Moodle up and runnin
 ## Build and Run
 
 ```sh
-git clone https://github.com/jbkc85/docker-moodle.git
+git clone https://github.com/dustinliddick/docker-moodle.git
 cd docker-moodle
 docker build -t yourtag/moodle .
 ```
