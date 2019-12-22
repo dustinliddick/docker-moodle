@@ -16,10 +16,10 @@ Based on official [centos] (https://hub.docker.com/_/centos/) images with additi
 - Kafka  (not in php71 image)
 - ImageMagick
 
-# Run
+#### Run
 Run this image:
 
-# docker-moodle
+#### docker-moodle
 
 Moodle Docker Image, Documentation and Compose files to get Moodle up and running for development and production purposes.
 
@@ -51,12 +51,12 @@ UNDER CONSTRUCTION...
 
 ## Testing
 
-### Local Testing with Compose
+#### Local Testing with Compose
 
 If you are interested in running this container locally to see what it acts like, simply run the test-compose.yml which will provide you with a Postgres Database and Moodle.  By default it will be listening on the localhost port 41337 to avoid any issues with port collisions.
 
 ```sh
-git clone https://github.com/jbkc85/docker-moodle.git
+git clone https://github.com/dustinliddick/docker-moodle.git
 docker-compose -f test-compose.yml up -d
 ```
 
